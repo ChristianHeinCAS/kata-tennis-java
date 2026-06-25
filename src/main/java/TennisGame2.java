@@ -15,8 +15,6 @@ public class TennisGame2 implements TennisGame {
     }
 
     public String getScore() {
-        var player1PointName = getPointName(P1point);
-        var player2PointName = getPointName(P2point);
         var pointDifference = Math.abs(P1point - P2point);
 
         if (pointDifference == 0) {
@@ -26,6 +24,9 @@ public class TennisGame2 implements TennisGame {
         if (pointDifference >= 2 && Math.max(P1point, P2point) >= 4) {
             return "Win for " + getLeadingPlayer();
         }
+
+        var player1PointName = getPointName(P1point);
+        var player2PointName = getPointName(P2point);
 
         if (player1PointName.isEmpty() || player2PointName.isEmpty()) {
             return "Advantage " + getLeadingPlayer();
