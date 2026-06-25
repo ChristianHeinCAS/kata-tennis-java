@@ -1,9 +1,9 @@
+import java.util.Optional;
 
-public class TennisGame2 implements TennisGame
-{
+public class TennisGame2 implements TennisGame {
     public int P1point = 0;
     public int P2point = 0;
-    
+
     public String P1res = "";
     public String P2res = "";
     private String player1Name;
@@ -14,115 +14,43 @@ public class TennisGame2 implements TennisGame
         this.player2Name = player2Name;
     }
 
-    public String getScore(){
-        String score = "";
-        if (P1point == P2point && P1point < 4)
-        {
-            if (P1point==0)
-                score = "Love";
-            if (P1point==1)
-                score = "Fifteen";
-            if (P1point==2)
-                score = "Thirty";
-            score += "-All";
+    public String getScore() {
+        var player1PointName = getPointName(P1point);
+        var player2PointName = getPointName(P2point);
+        var pointDifference = Math.abs(P1point - P2point);
+
+        if (pointDifference == 0) {
+            return getDrawScore();
         }
-        if (P1point==P2point && P1point>=3)
-            score = "Deuce";
-        
-        if (P1point > 0 && P2point==0)
-        {
-            if (P1point==1)
-                P1res = "Fifteen";
-            if (P1point==2)
-                P1res = "Thirty";
-            if (P1point==3)
-                P1res = "Forty";
-            
-            P2res = "Love";
-            score = P1res + "-" + P2res;
+
+        if (pointDifference >= 2 && Math.max(P1point, P2point) >= 4) {
+            return "Win for " + getLeadingPlayer();
         }
-        if (P2point > 0 && P1point==0)
-        {
-            if (P2point==1)
-                P2res = "Fifteen";
-            if (P2point==2)
-                P2res = "Thirty";
-            if (P2point==3)
-                P2res = "Forty";
-            
-            P1res = "Love";
-            score = P1res + "-" + P2res;
+
+        if (player1PointName.isEmpty() || player2PointName.isEmpty()) {
+            return "Advantage " + getLeadingPlayer();
         }
-        
-        if (P1point>P2point && P1point < 4)
-        {
-            if (P1point==2)
-                P1res="Thirty";
-            if (P1point==3)
-                P1res="Forty";
-            if (P2point==1)
-                P2res="Fifteen";
-            if (P2point==2)
-                P2res="Thirty";
-            score = P1res + "-" + P2res;
-        }
-        if (P2point>P1point && P2point < 4)
-        {
-            if (P2point==2)
-                P2res="Thirty";
-            if (P2point==3)
-                P2res="Forty";
-            if (P1point==1)
-                P1res="Fifteen";
-            if (P1point==2)
-                P1res="Thirty";
-            score = P1res + "-" + P2res;
-        }
-        
-        if (P1point > P2point && P2point >= 3)
-        {
-            score = "Advantage player1";
-        }
-        
-        if (P2point > P1point && P1point >= 3)
-        {
-            score = "Advantage player2";
-        }
-        
-        if (P1point>=4 && P2point>=0 && (P1point-P2point)>=2)
-        {
-            score = "Win for player1";
-        }
-        if (P2point>=4 && P1point>=0 && (P2point-P1point)>=2)
-        {
-            score = "Win for player2";
-        }
-        return score;
+
+        return player1PointName.get() + "-" + player2PointName.get();
     }
-    
-    public void SetP1Score(int number){
-        
-        for (int i = 0; i < number; i++)
-        {
+
+    public void SetP1Score(int number) {
+        for (int i = 0; i < number; i++) {
             P1Score();
         }
-            
     }
-    
-    public void SetP2Score(int number){
-        
-        for (int i = 0; i < number; i++)
-        {
+
+    public void SetP2Score(int number) {
+        for (int i = 0; i < number; i++) {
             P2Score();
         }
-            
     }
-    
-    public void P1Score(){
+
+    public void P1Score() {
         P1point++;
     }
-    
-    public void P2Score(){
+
+    public void P2Score() {
         P2point++;
     }
 
@@ -131,5 +59,44 @@ public class TennisGame2 implements TennisGame
             P1Score();
         else
             P2Score();
+    }
+
+    private String getDrawScore() {
+        assert P1point == P2point;
+        return switch (P1point) {
+            case 0:
+                yield "Love-All";
+            case 1:
+                yield "Fifteen-All";
+            case 2:
+                yield "Thirty-All";
+            case 3, 4:
+                yield "Deuce";
+            default:
+                throw new IllegalStateException();
+        };
+    }
+
+    private Optional<String> getPointName(int point) {
+        return Optional.ofNullable(switch (point) {
+            case 0:
+                yield "Love";
+            case 1:
+                yield "Fifteen";
+            case 2:
+                yield "Thirty";
+            case 3:
+                yield "Forty";
+            default:
+                yield null;
+        });
+    }
+
+    private String getLeadingPlayer() {
+        if (P1point > P2point) {
+            return player1Name;
+        } else {
+            return player2Name;
+        }
     }
 }
